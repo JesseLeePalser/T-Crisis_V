@@ -1315,7 +1315,7 @@ function SetupForNewGame()
             Lines[4] = 249;
         }
     }
-
+/*
 	if (ScreensClassObject.DEBUG === true && GameMode === OriginalMode)
 	{
 		Score[0] = 3652096;
@@ -1334,7 +1334,7 @@ function SetupForNewGame()
 		Level[4] = 262;
 		Lines[4] = 2627;
 	}
-	
+*/
 	Player = 0;
 
 	PAUSEgame = false;
@@ -2422,9 +2422,9 @@ let tempCPUPlayerEnabled = CPUPlayerEnabled;
 		if (GameMode !== FirefoxStoryMode && CPUPlayerEnabled > 0 && CPUPlayerEnabled < 4) {
 			let timeToWrongMove = 0;
 
-			if (CPUPlayerEnabled === 1) timeToWrongMove = (3 * 60);
-			if (CPUPlayerEnabled === 2) timeToWrongMove = (9 * 60);
-			if (CPUPlayerEnabled === 3) timeToWrongMove = (27 * 60);
+			if (CPUPlayerEnabled === 1) timeToWrongMove = (2 * 60);
+			if (CPUPlayerEnabled === 2) timeToWrongMove = (4 * 60);
+			if (CPUPlayerEnabled === 3) timeToWrongMove = (16 * 60);
 
 			if (ComputerPlayerHandicap[Player] > timeToWrongMove) {
 				let randomPosX = Math.floor((Math.random() * (PlayfieldEndX[Player] - 1)));
