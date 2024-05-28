@@ -33,7 +33,6 @@ function CreateGUIArrowSet(index, x, y)
     InterfaceClassObject.ArrowSetThatWasSelected = 0;
     InterfaceClassObject.ArrowSetArrowSelected = -1;
     InterfaceClassObject.ArrowSetSelectedAnimationTimer = -1;
-    InterfaceClassObject.ArrowSetSelectedByKeyboard = 0;
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -203,7 +202,6 @@ function DestroyAllGUIArrowSets()
     InterfaceClassObject.ArrowSetThatWasSelected = 0;
     InterfaceClassObject.ArrowSetArrowSelected = -1;
     InterfaceClassObject.ArrowSetSelectedAnimationTimer = -1;
-    InterfaceClassObject.ArrowSetSelectedByKeyboard = 0;
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -659,7 +657,7 @@ function DrawAllGamepad()
             else  scale = 1;
 
             InitializeClassObject.ctx.save();
-            InitializeClassObject.ctx.globalAlpha = 0.75;
+            InitializeClassObject.ctx.globalAlpha = 0.5;
 
             InitializeClassObject.ctx.drawImage(  VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[index]], (x - ((computedCenterX) * scale) ), (y - ((computedCenterY) * scale) )
                 , (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[index]].width * scale), (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[index]].height * scale)  );
@@ -674,7 +672,7 @@ function DrawAllGamepad()
 function ProcessAllGamepad() {
     InterfaceClassObject.GamepadSelectedByPlayer = -1;
 
-    if (InputClassObject.MouseButtonClicked === true && InterfaceClassObject.GamepadAnimationTimer[0] === -1) {
+    if (InputClassObject.MouseButtonDown === true) {
         if (InputClassObject.MouseTouchX > (InterfaceClassObject.GamepadScreenX[0] - (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[0]].width / 2)) && InputClassObject.MouseTouchX < (InterfaceClassObject.GamepadScreenX[0] + (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[0]].width / 2))
             && InputClassObject.MouseTouchY > (InterfaceClassObject.GamepadScreenY[0] - (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[0]].height / 2)) && InputClassObject.MouseTouchY < (InterfaceClassObject.GamepadScreenY[0] + (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[0]].height / 2))) {
             InterfaceClassObject.GamepadSelectedByPlayer = 0;
@@ -683,9 +681,7 @@ function ProcessAllGamepad() {
 
             ScreensClassObject.ScreenIsDirty = true;
         }
-    }
 
-    if (InputClassObject.MouseButtonDown === true) {
         if (InputClassObject.MouseTouchX > (InterfaceClassObject.GamepadScreenX[1] - (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[1]].width / 2)) && InputClassObject.MouseTouchX < (InterfaceClassObject.GamepadScreenX[1] + (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[1]].width / 2))
             && InputClassObject.MouseTouchY > (InterfaceClassObject.GamepadScreenY[1] - (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[1]].height / 2)) && InputClassObject.MouseTouchY < (InterfaceClassObject.GamepadScreenY[1] + (VisualsClassObject.OnScreenGamepadSprites[InterfaceClassObject.GamepadSpriteIndex[1]].height / 2))) {
             InterfaceClassObject.GamepadSelectedByPlayer = 1;

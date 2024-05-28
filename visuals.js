@@ -103,7 +103,7 @@ function LoadIndividualImage(index, path)
 {
     VisualsClassObject.TotalNumberOfImages++;
 
-    sleep(AudioClassObject.time*AudioClassObject.multiplier).then(() => {
+    sleep(VisualsClassObject.Time*VisualsClassObject.Multiplier).then(() => {
         VisualsClassObject.ImageSprites[index].src = path;
 
         VisualsClassObject.ImageSprites[index].onload = function() {
@@ -111,7 +111,7 @@ function LoadIndividualImage(index, path)
         };
     });
 
-    AudioClassObject.multiplier++;
+    VisualsClassObject.Multiplier++;
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -185,6 +185,9 @@ function LoadImages()
     LoadIndividualImage(40, "data/visuals/Firefox-01.png");
     LoadIndividualImage(49, "data/visuals/Playfield-BG.png");
     LoadIndividualImage(50, "data/visuals/Playfield.png");
+
+    LoadIndividualImage(51, "data/visuals/Playfield5Player.png");
+
     LoadIndividualImage(60, "data/visuals/Box-Black.png")
     LoadIndividualImage(61, "data/visuals/Box-White.png");
     LoadIndividualImage(62, "data/visuals/Box-Red.png");
@@ -260,7 +263,7 @@ function PreloadAllStaffTexts()
     PreloadStaffText(20, "Clint Eastwood", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
 
     PreloadStaffText(20, "Special Thank You To My Mentors:", 400, 75, "center", 255, 255, 0, 0, 0, 0, 1);
-    PreloadStaffText(20, "Garry Kitchen", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);1
+    PreloadStaffText(20, "Garry Kitchen", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
     PreloadStaffText(20, "Andre' LaMothe", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
 
     PreloadStaffText(20, "Special Thank You To:", 400, 75, "center", 255, 255, 0, 0, 0, 0, 1);
@@ -295,12 +298,12 @@ function PreloadAllStaffTexts()
     PreloadStaffText(20, "''JeZxLee''", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
 
     PreloadStaffText(20, "Music Soundtrack By:", 400, 75, "center", 255, 255, 0, 0, 0, 0, 1);
-    PreloadStaffText(20, "''Suno.com''", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
-    PreloadStaffText(20, "(Paid Artificially & Intelligently Created Music)", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
-    PreloadStaffText(20, "($10 A Month For 500 Songs A Month!)", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
-    PreloadStaffText(20, "--------------------------------------------------", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
-    PreloadStaffText(20, "''YouTube.com''", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
-    PreloadStaffText(20, "(Good Source Of Great BGM Music)", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
+    PreloadStaffText(20, "''D.J. Fading Twilight''", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
+//    PreloadStaffText(20, "(Paid Artificially & Intelligently Created Music)", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
+//    PreloadStaffText(20, "($10 A Month For 500 Songs A Month!)", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
+//    PreloadStaffText(20, "--------------------------------------------------", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
+//    PreloadStaffText(20, "''YouTube.com''", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
+//    PreloadStaffText(20, "(Good Source Of Great BGM Music)", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
 
     PreloadStaffText(20, "Support Game Designers/Programmers/Testers:", 400, 75, "center", 255, 255, 0, 0, 0, 0, 1);
     PreloadStaffText(20, "''Daotheman''", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
@@ -321,7 +324,7 @@ function PreloadAllStaffTexts()
     PreloadStaffText(20, "Desktop Code Name: ''Megatron''", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
     PreloadStaffText(20, "Desktop Class: Mid-Range", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
     PreloadStaffText(20, "Build Date: June 11th, 2022", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
-    PreloadStaffText(20, "Genuine Linux Mint 21.3 Cinnamon 64Bit Linux OS", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
+    PreloadStaffText(20, "Genuine ''Linux Mint 21.3 Cinnamon'' 64Bit Linux OS", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
     PreloadStaffText(20, "Silverstone Tek ATX Mid Tower Case", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
     PreloadStaffText(20, "EVGA Supernova 650 GT 80 Plus Gold 650W Power Supply", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);
     PreloadStaffText(20, "ASUS AM4 TUF Gaming X570-Plus (Wi-Fi) Motherboard", 400, 75, "center", 255, 255, 255, 0, 0, 0, 1);

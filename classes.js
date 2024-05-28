@@ -23,25 +23,24 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class AudioClass {
     constructor() {
-        this.SoundVolume = 0.5;
-        this.MusicVolume = 0.5;
+        this.SoundVolume = 0.25;
+        this.MusicVolume = 0.25;
         this.SoundArray = new Array(15);
         this.MusicArray = new Array(1);
-        this.Time = 0.75;
-        this.Multiplier = 0.75;
         this.NumberOfLoadedSounds = 0;
         this.TotalNumberOfSounds = -1;
         this.NumberOfLoadedMusics = 0;
         this.TotalNumberOfMusics = 1;
         this.AtLeastOneMusicHasPlayed = false;
+        this.TitleSpeechSpoken = false;
     }
 }
 const AudioClassObject = new AudioClass();
 
 class DataClass {
     constructor() {
-        this.GameName = 'TC5-Retail3ze-';
-        this.Version = 5.37;
+        this.GameName = 'TC5-Retail3zn-';
+        this.Version = 5.4413;
         this.NewHighScoreRank = 999;
         this.PlayerWithHighestScore = 2;
         this.NewHighScoreNameIndex = 0;
@@ -107,7 +106,6 @@ class InputClass {
         this.JoystickButtonOne = new Array(8);
         this.JoystickButtonTwo = new Array(8);
         this.KeyboardSpaceBarFunction = 1;
-        this.USBGamepadsSupported = false;
         this.Gamepads = new Array(10);
         this.GamepadsOLD = new Array(10);
         this.FirstHumanPlayerInput = 0;
@@ -115,6 +113,7 @@ class InputClass {
         this.GamepadConfigGetInput = 0;
         this.GamepadAxisZero = 0;
         this.GamepadButtonZero = 10;
+        this.StickDriftDisable = new Array(10);
         this.GamepadUP = new Array(10);
         this.GamepadRIGHT = new Array(10);
         this.GamepadDOWN = new Array(10);
@@ -146,7 +145,6 @@ class InterfaceClass {
         this.GUIButtonScreenY = [];
         this.NumberOfOnscreenArrowSets = 0;
         this.GUISelectorLineSprite = 0;
-        this.ArrowSetSelectedByKeyboard = -1;
         this.GUIArrowSets = [];
         this.ArrowSetThatWasSelected = -1;
         this.ArrowSetSelectedAnimationTimer = -1;
@@ -188,13 +186,6 @@ class InterfaceClass {
 }
 const InterfaceClassObject = new InterfaceClass();
 
-class LogicClass {
-    constructor() {
-
-    }
-}
-const LogicClassObject = new LogicClass();
-
 // LogicClassObject.
 
 class ScreensClass {
@@ -230,6 +221,8 @@ class VisualsClass {
         this.ImageSprites = new Array(200);
         this.NumberOfLoadedImages = 0;
         this.TotalNumberOfImages = 0;
+        this.Time = 100;
+        this.Multiplier = 0.1;
         this.BrowserWidth = 800;
         this.BrowserHeight = 480;
         this.NumberOfPreloadedStaffTexts = -1;

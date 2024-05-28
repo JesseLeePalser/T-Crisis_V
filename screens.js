@@ -67,41 +67,42 @@ function ApplyScreenFade()
 }
 
 //--------------------------------------------------------------------------------------------------------------
-function GameLoop()
-{
-let index;
+function GameLoop() {
+    let index;
 
     ScreensClassObject.frameCount++;
 
     let CurrentTime = new Date().getTime();
-    if (CurrentTime > InitializeClassObject.NextSecond)
-    {
+    if (CurrentTime > InitializeClassObject.NextSecond) {
         ScreensClassObject.FPS = ScreensClassObject.frameCount;
         ScreensClassObject.frameCount = 0;
-        InitializeClassObject.NextSecond = CurrentTime+1000;
+        InitializeClassObject.NextSecond = CurrentTime + 1000;
     }
 
     InputClassObject.Gamepads = navigator.getGamepads();
-    for (let index = 0; index < 5; index++)  CheckForGamepadInput(index);
+    for (let index = 0; index < 5; index++) CheckForGamepadInput(index);
 
-    if (ScreensClassObject.DEBUG === true)  ScreensClassObject.ScreenIsDirty = true;
+    if (ScreensClassObject.DEBUG === true) ScreensClassObject.ScreenIsDirty = true;
 
-    if (ScreensClassObject.ScreenToDisplay === 0)  DisplayLoadingNowScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 1)  DisplayLicenseScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 2)  DisplayGameControllerScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 3)  DisplayTitleScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 4)  DisplayOptionsScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 5)  DisplayHowToPlayScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 6)  DisplayHighScoresScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 7)  DisplayAboutScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 8)  DisplayPlayingGameScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 9)  DisplayPlayingStoryGameScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 10)  DisplayNewHighScoreNameInputScreen();
-    else if (ScreensClassObject.ScreenToDisplay === 11)  DisplayStoryVideo();
-	else if (ScreensClassObject.ScreenToDisplay === 12)  DisplayAITestScreen();
+    if (ScreensClassObject.ScreenToDisplay === 0) DisplayLoadingNowScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 1) DisplayLicenseScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 2) DisplayGameControllerScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 3) DisplayTitleScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 4) DisplayOptionsScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 5) DisplayHowToPlayScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 6) DisplayHighScoresScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 7) DisplayAboutScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 8) DisplayPlayingGameScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 9) DisplayPlayingStoryGameScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 10) DisplayNewHighScoreNameInputScreen();
+    else if (ScreensClassObject.ScreenToDisplay === 11) DisplayStoryVideo();
+    else if (ScreensClassObject.ScreenToDisplay === 12) DisplayAITestScreen();
 
-    DrawAllGUIButtonImages();
-    DrawAllIcons();
+    if (ScreensClassObject.ScreenToDisplay !== 8 && ScreensClassObject.ScreenToDisplay !== 9 && ScreensClassObject.ScreenToDisplay !== 12){
+        DrawAllGUIButtonImages();
+        DrawAllIcons();
+    }
+
     DrawAllGamepad();
 	
     if (ScreensClassObject.DEBUG === true && PAUSEgame === false)// && ScreensClassObject.ScreenToDisplay !== 9)
@@ -196,8 +197,6 @@ function DisplayLoadingNowScreen() {
     {
         InitializeClassObject.ctx.clearRect(0, 0, VisualsClassObject.screenWidth, VisualsClassObject.screenHeight);
 
-        //InitializeClassObject.Browser = "Mobile";
-
         if (InitializeClassObject.BrowserMobileSSafari === true){
             DrawTextOntoCanvas(17, "HTML5 On Apple iPhone iOS/iPad iPadOS Is Junk!", 400, 480 - 35, "center", 255, 255, 255, 100, 100, 100, 1);
         }
@@ -213,6 +212,12 @@ function DisplayLoadingNowScreen() {
 
         if (InitializeClassObject.BrowserMobileSSafari === true)  DrawTextOntoCanvas(25, "NOTE: Game Runs Best On Google Android Mobile Devices", 400, 480-(480/4), "center", 255, 255, 255, 100, 100, 100, 1);
 
+        for (let index = 0; index < 5; index++) {
+            if ( QueryGamepadsForInput(index) !== -1) {
+                InputClassObject.StickDriftDisable[index] = true;
+            }
+        }
+
         if (ScreensClassObject.ScreenFadeAlpha === .99 && ScreensClassObject.ScreenFadeStatus === 1) {
             CreateGUIButtonsWithText();
             PreloadAllStaffTexts();
@@ -227,12 +232,6 @@ function DisplayLoadingNowScreen() {
             InputClassObject.DelayAllUserInput = 25;
 
             InterfaceClassObject.CursorIsArrow = true;
-
-//            if (InitializeClassObject.Browser === "Mobile"){
-//                PlayMusic(0);
-
-//                ToggleFullScreen();
-//            }
         }
     }
 }
@@ -296,21 +295,35 @@ function DisplayGameControllerScreen()
         DrawTextOntoCanvas(25, "G A M E   C O N T R O L L E R   S E T U P:", 400, 26, "center", 255, 255, 0, 0, 0, 0, 1);
         DrawTextOntoCanvas(25, "________________________________________________", 400, 30, "center", 255, 255, 0, 0, 0, 0, 1);
 
-        DrawTextOntoCanvas(25, "USB game controller(s) must be plugged in", 400, 26+45-10, "center", 255, 255, 255, 0, 0, 0, 1);
-        DrawTextOntoCanvas(25, "before starting your Internet browser.", 400, 26+45+30-10, "center", 255, 255, 255, 0, 0, 0, 1);
-        DrawTextOntoCanvas(17, "(NOTE: Not all Internet browsers/USB game controllers are supported)", 400, 26+45+30+30-10, "center", 255, 255, 255, 0, 0, 0, 1);
+        DrawTextOntoCanvas(25, "USB game controller(s) must be plugged in", 400, 26+45-12-1, "center", 255, 255, 255, 0, 0, 0, 1);
+        DrawTextOntoCanvas(25, "before starting your Internet browser.", 400, 26+45+30-10-3, "center", 255, 255, 255, 0, 0, 0, 1);
+        DrawTextOntoCanvas(17, "(NOTE: Not all Internet browsers/USB game controllers are supported)", 400, 26+45+30+30-10-3-3, "center", 255, 255, 255, 0, 0, 0, 1);
 
-        DrawTextOntoCanvas(25, "________________________________________________", 400, 26+45+30+30-10+20, "center", 255, 255, 255, 0, 0, 0, 1);
+        DrawTextOntoCanvas(25, "________________________________________________", 400, 26+45+30+30-10+20-14, "center", 255, 255, 255, 0, 0, 0, 1);
 
-        DrawTextOntoCanvas(25, "Press a button on all plugged in USB game controllers", 400, 26+45+30+30+75-15, "center", 155, 255, 155, 0, 0, 0, 1);
-        DrawTextOntoCanvas(25, "to initialize controller(s) for use with this video game.", 400, 26+45+30+30+75+30-15, "center", 155, 255, 155, 0, 0, 0, 1);
+        DrawTextOntoCanvas(25, "Press a button on all plugged in USB game controllers", 400, 26+45+30+30+75-15-10-10, "center", 155, 255, 155, 0, 0, 0, 1);
+        DrawTextOntoCanvas(25, "to initialize controller(s) for use with this video game.", 400, 26+45+30+30+75+30-15-10-10, "center", 155, 255, 155, 0, 0, 0, 1);
 
-        DrawTextOntoCanvas(25, "________________________________________________", 400, 26+45+30+30+75+30-15+20, "center", 255, 255, 255, 0, 0, 0, 1);
+        DrawTextOntoCanvas(25, "________________________________________________", 400, 26+45+30+30+75+30-15+20-7-10, "center", 255, 255, 255, 0, 0, 0, 1);
 
         for (let index = 0; index < 5; index++) {
-            QueryGamepadsForInput(index);
-            if (InputClassObject.GameControllerInitialized[index] === true)  DrawTextOntoCanvas(25, "''" + InputClassObject.Gamepads[index].id + "''", 400, 26 + 45 + 30 + 30 + 50 + 30 - 15 + 110 + (index * 25), "center", 255, 255, 255, 0, 0, 0, 1);
+            if (InputClassObject.StickDriftDisable[index] === false) {
+                QueryGamepadsForInput(index);
+
+                if (InputClassObject.GameControllerInitialized[index] === true) {
+                    if (InputClassObject.StickDriftDisable[index] === false) {
+                        DrawTextOntoCanvas(22, "''" + InputClassObject.Gamepads[index].id + "''", 400, 26 + 45 + 30 + 30 + 50 + 30 - 15 + 110 - 50 + (index * 26), "center", 0, 255, 0, 0, 0, 0, 1);
+                    }
+                }
+            }
+            else if (InputClassObject.StickDriftDisable[index] === true) {
+                DrawTextOntoCanvas(22, "''" + InputClassObject.Gamepads[index].id + "''", 400, 26 + 45 + 30 + 30 + 50 + 30 - 15 + 110 - 50 + (index * 26), "center", 255, 0, 0, 0, 0, 0, 1);
+            }
         }
+
+        DrawTextOntoCanvas(25, "________________________________________________", 400, 26+45+30+30+75+30-15+20-7-10+140, "center", 255, 255, 255, 0, 0, 0, 1);
+
+        DrawTextOntoCanvas(45, "Press [Exit] When Done!", 400, 26+45+30+30+75-15-10-10+244, "center", 255, 255, 255, 0, 0, 0, 1);
 
         DrawTextOntoCanvas(25, "________________________________________________", 400, 424, "center", 255, 255, 0, 0, 0, 0, 1);
     }
@@ -347,6 +360,11 @@ function DisplayTitleScreen()
         ScreensClassObject.LogoFlashScreenX = -50;
         
         FirefoxStoryModeStarted = false;
+
+        if (AudioClassObject.TitleSpeechSpoken === false) {
+            PlaySoundEffect(15);
+            AudioClassObject.TitleSpeechSpoken = true;
+        }
 	}
 
     InterfaceClassObject.CursorIsArrow = MouseOnGUI() !== true;
@@ -365,7 +383,7 @@ function DisplayTitleScreen()
         }
         else
         {
-            Level[0] = 0;
+            Level[4] = 0;
             ScreensClassObject.NextScreenToDisplay = 11;
         }
 
@@ -575,10 +593,20 @@ function DisplayOptionsScreen()
             if (InputClassObject.Gamepads[0])
             {
                 InputClassObject.GamepadConfigPadIndex = 0;
-                
+
                 InputClassObject.GamepadConfigGetInput = 0;
 
                 InputClassObject.controllerIndex = 0;
+
+                if (InputClassObject.StickDriftDisable[0] === true)  InputClassObject.controllerIndex++;
+
+                if (InputClassObject.StickDriftDisable[1] === true)  InputClassObject.controllerIndex++;
+
+                if (InputClassObject.StickDriftDisable[2] === true)  InputClassObject.controllerIndex++;
+
+                if (InputClassObject.StickDriftDisable[3] === true)  InputClassObject.controllerIndex++;
+
+                if (InputClassObject.StickDriftDisable[4] === true)  InputClassObject.GamepadConfigPadIndex = -1;
             }
             else  InputClassObject.GamepadConfigPadIndex = -1;
         }
@@ -604,7 +632,7 @@ function DisplayOptionsScreen()
     if (InputClassObject.GamepadConfigPadIndex > -1)
     {    
         let gamepadInput = QueryGamepadsForInput(InputClassObject.controllerIndex);
-        if ( gamepadInput !== -1)
+        if (gamepadInput !== -1)
         {
             if (InputClassObject.GamepadConfigGetInput === 0)
             {
@@ -654,6 +682,20 @@ function DisplayOptionsScreen()
                     InputClassObject.GamepadConfigPadIndex = 0;
                     InputClassObject.GamepadConfigGetInput = 0;
                     InputClassObject.controllerIndex++;
+
+                    if (InputClassObject.controllerIndex === 0 && InputClassObject.StickDriftDisable[0] === true)  InputClassObject.controllerIndex = 1;
+
+                    if (InputClassObject.controllerIndex === 1 && InputClassObject.StickDriftDisable[1] === true)  InputClassObject.controllerIndex = 2;
+
+                    if (InputClassObject.controllerIndex === 2 && InputClassObject.StickDriftDisable[2] === true)  InputClassObject.controllerIndex = 3;
+
+                    if (InputClassObject.controllerIndex === 3 && InputClassObject.StickDriftDisable[3] === true)  InputClassObject.controllerIndex = 4;
+
+                    if (InputClassObject.controllerIndex === 4 && InputClassObject.StickDriftDisable[4] === true) {
+                        InputClassObject.GamepadConfigPadIndex = -1
+                        InputClassObject.GamepadConfigGetInput = -1;
+                        InputClassObject.controllerIndex = -1;
+                    }
                 }
                 else {
                     InputClassObject.GamepadConfigPadIndex = -1
@@ -746,7 +788,7 @@ function DisplayOptionsScreen()
         {
             DrawSpriteOntoCanvas(0, 400, 240, 1, 1, 0, .95, 255, 255, 255);
 
-            DrawTextOntoCanvas(20, "''"+InputClassObject.Gamepads[InputClassObject.controllerIndex].id+"''", 400, 80, "center", 255, 255, 255, 0, 0, 0, 1);
+            DrawTextOntoCanvas(20, "#"+InputClassObject.controllerIndex+" ''"+InputClassObject.Gamepads[InputClassObject.controllerIndex].id+"''", 400, 80, "center", 255, 255, 255, 0, 0, 0, 1);
 
             if (InputClassObject.GamepadConfigGetInput === 0)  DrawTextOntoCanvas(55, "Press [UP] Now!", 400, 250, "center", 255, 255, 255, 0, 0, 0, 1);
             else if (InputClassObject.GamepadConfigGetInput === 1)  DrawTextOntoCanvas(55, "Press [RIGHT] Now!", 400, 250, "center", 255, 255, 255, 0, 0, 0, 1);
@@ -902,7 +944,7 @@ function DisplayHighScoresScreen()
 {
     if (ScreensClassObject.ScreenFadeAlpha === 1 && ScreensClassObject.ScreenFadeStatus === 0)
     {
-        CreateGUIArrowSet(0, 400, 85);
+        CreateGUIArrowSet(0, 400, 79);
 
         CreateGUIButton(6, 400, 455);
     }
@@ -944,13 +986,13 @@ function DisplayHighScoresScreen()
 
         DrawAllGUIArrowSetImages();
 
-        if (GameMode === 0)  DrawTextOntoCanvas(20, "Original Mode", 400, 85-15, "center", 255, 255, 255, 0, 0, 0, 1);
-        else if (GameMode === 1)  DrawTextOntoCanvas(20, "Time Attack 30 Mode", 400, 85-15, "center", 255, 255, 255, 0, 0, 0, 1);
-        else if (GameMode === 2)  DrawTextOntoCanvas(20, "Time Attack 60 Mode", 400, 85-15, "center", 255, 255, 255, 0, 0, 0, 1);
-        else if (GameMode === 3)  DrawTextOntoCanvas(20, "Time Attack 120 Mode", 400, 85-15, "center", 255, 255, 255, 0, 0, 0, 1);
-        else if (GameMode === 4)  DrawTextOntoCanvas(20, "Twenty Line Challenge Mode", 400, 85-15, "center", 255, 255, 255, 0, 0, 0, 1);
-        else if (GameMode === 5)  DrawTextOntoCanvas(20, "''Crisis+Mode''", 400, 85-15, "center", 255, 255, 255, 0, 0, 0, 1);
-        else if (GameMode === 6)  DrawTextOntoCanvas(20, "''Firefox'' Story Mode", 400, 85-15, "center", 255, 255, 255, 0, 0, 0, 1);
+        if (GameMode === 0)  DrawTextOntoCanvas(20, "Original Mode", 400, 85-15-6, "center", 255, 255, 255, 0, 0, 0, 1);
+        else if (GameMode === 1)  DrawTextOntoCanvas(20, "Time Attack 30 Mode", 400, 85-15-6, "center", 255, 255, 255, 0, 0, 0, 1);
+        else if (GameMode === 2)  DrawTextOntoCanvas(20, "Time Attack 60 Mode", 400, 85-15-6, "center", 255, 255, 255, 0, 0, 0, 1);
+        else if (GameMode === 3)  DrawTextOntoCanvas(20, "Time Attack 120 Mode", 400, 85-15-6, "center", 255, 255, 255, 0, 0, 0, 1);
+        else if (GameMode === 4)  DrawTextOntoCanvas(20, "Twenty Line Challenge Mode", 400, 85-15-6, "center", 255, 255, 255, 0, 0, 0, 1);
+        else if (GameMode === 5)  DrawTextOntoCanvas(20, "''Crisis+Mode''", 400, 85-15-6, "center", 255, 255, 255, 0, 0, 0, 1);
+        else if (GameMode === 6)  DrawTextOntoCanvas(20, "''Firefox'' Story Mode", 400, 85-15-6, "center", 255, 255, 255, 0, 0, 0, 1);
 
         DrawTextOntoCanvas(20, "NAME:", 36, 106, "left", 255, 255, 255, 0, 0, 0, 1);
         DrawTextOntoCanvas(20, "LEVEL:", 500, 106, "left", 255, 255, 255, 0, 0, 0, 1);
@@ -993,7 +1035,7 @@ function DisplayHighScoresScreen()
 
             if (GameMode === CrisisMode && DataClassObject.HighScoresLevel[GameMode][indexAdjusted] > 9)
         	    DrawTextOntoCanvas(20, "Won!", 500, y, "left", 255, greenBlue, greenBlue, 0, 0, 0, 1);
-            else if (GameMode === FirefoxStoryMode && DataClassObject.HighScoresLevel[GameMode][indexAdjusted] > 29)
+            else if (GameMode === FirefoxStoryMode && DataClassObject.HighScoresLevel[GameMode][indexAdjusted] > 5)
                 DrawTextOntoCanvas(20, "Won!", 500, y, "left", 255, greenBlue, greenBlue, 0, 0, 0, 1);
             else
         	    DrawTextOntoCanvas(20, ""+DataClassObject.HighScoresLevel[GameMode][indexAdjusted]+"", 500, y, "left", 255, greenBlue, greenBlue, 0, 0, 0, 1);
@@ -1074,8 +1116,8 @@ let index;
     }
     else if (ScreensClassObject.StaffFirefoxSceneTimer === 1)
     {
-        let speedY = 1.25;
-        if (InputClassObject.JoystickDirection[Any] === InputClassObject.UP)  speedY = (1.25*7);
+        let speedY = 1;
+        if (InputClassObject.JoystickDirection[Any] === InputClassObject.UP)  speedY = (7);
 
         for (index = 0; index < (VisualsClassObject.NumberOfPreloadedStaffTexts+1); index++)
         {
@@ -1278,8 +1320,8 @@ let x;
     {
         GameDisplayChanged = false;
         
-        DrawSpriteOntoCanvas(20, 400, 240, 1, 1, 0, 1, 255, 255, 255);
-
+        DrawSpriteOntoCanvas(51, 400, 240, 1, 1, 0, 1, 255, 255, 255);
+/*
         DrawSpriteOntoCanvas(50 , PlayersPlayfieldScreenX[0], PlayersPlayfieldScreenY[0], 1, 1, 0, 1, 100, 255, 255);
         DrawSpriteOntoCanvas(49 , PlayersPlayfieldScreenX[0], PlayersPlayfieldScreenY[0], 1, 1, 0, .75, 255, 255, 255);
         DrawSpriteOntoCanvas(50 , PlayersPlayfieldScreenX[1], PlayersPlayfieldScreenY[1], 1, 1, 0, 1, 100, 100, 255);
@@ -1290,7 +1332,7 @@ let x;
         DrawSpriteOntoCanvas(49 , PlayersPlayfieldScreenX[3], PlayersPlayfieldScreenY[3], 1, 1, 0, .75, 255, 255, 255);
         DrawSpriteOntoCanvas(50 , PlayersPlayfieldScreenX[4], PlayersPlayfieldScreenY[4], 1, 1, 0, 1, 100, 255, 100);
         DrawSpriteOntoCanvas(49 , PlayersPlayfieldScreenX[4], PlayersPlayfieldScreenY[4], 1, 1, 0, .75, 255, 255, 255);
-
+*/
         for (player = 0; player < NumberOfPlayers; player++)
         {
             DrawTextOntoCanvas(20, ""+Score[player]+"", PlayersPlayfieldScreenX[player], 25, "center", 255, 255, 255, 0, 0, 0, 0);
@@ -1307,7 +1349,7 @@ let x;
                 DrawTextOntoCanvas(20, "C.P.U.", PlayersPlayfieldScreenX[player], 475, "center", 255, 255, 255, 0, 0, 0, 0);
             else
                 DrawTextOntoCanvas(20, "Gamepad", PlayersPlayfieldScreenX[player], 475, "center", 255, 255, 255, 0, 0, 0, 0);
-            
+
             boxScreenX = PlayersPlayfieldScreenX[player]-59;
             boxScreenY = PlayersPlayfieldScreenY[player]-212;
             for (y = 0; y < 26; y++)
@@ -1333,7 +1375,7 @@ let x;
                 boxScreenX = PlayersPlayfieldScreenX[player]-59;
                 boxScreenY+=18;
             }
-            
+
             if (InitializeClassObject.Browser !== "Mobile" && InterfaceClassObject.UseOnscreenGamepad === false && PlayerInput[player] === Mouse && PlayerStatus[player] === PieceFalling)
             {
                 boxScreenX = PlayersPlayfieldScreenX[player]-59;
@@ -1350,7 +1392,7 @@ let x;
                             && MouseMovePlayfieldX+offsetX === x && MouseMovePlayfieldY+offsetY === y )
                                 if (MouseMovePlayfieldY >= PiecePlayfieldY[player])
                                     DrawSpriteOntoCanvas(61, boxScreenX, boxScreenY, 1, 1, 0, .5, 255, 255, 255);
-                    
+
                             offsetX++;
                             if (offsetX > 3)
                             {
@@ -1365,7 +1407,7 @@ let x;
                     boxScreenX = PlayersPlayfieldScreenX[player]-59;
                     boxScreenY+=18;
                 }
-            
+
                 if ( (MouseMovePlayfieldY < PiecePlayfieldY[player]) || (PiecePlayfieldX[player] === MouseMovePlayfieldX && PiecePlayfieldY[player] === MouseMovePlayfieldY) )
                     DrawTextOntoCanvas(12, "Rotate", PieceMouseScreenX+13, PieceMouseScreenY-18, "center", 255, 255, 255, 0, 0, 0, 0);
                 else
@@ -1555,7 +1597,7 @@ let player;
         if (InterfaceClassObject.UseOnscreenGamepad === true)  ProcessAllGamepad();
     }
 
-    if (InputClassObject.KeyboardCharacterPressed === "_" && PlayerStatus[0] !== GameOver && InputClassObject.KeyboardSpaceBarFunction === 0)
+    if (InputClassObject.KeyboardCharacterPressed === "_" && PlayerStatus[4] !== GameOver && InputClassObject.KeyboardSpaceBarFunction === 0)
     {
         if (PAUSEgame === false)
         {
@@ -1570,7 +1612,7 @@ let player;
 
         PlaySoundEffect(0);
     }
-    else if (InputClassObject.KeyboardCharacterPressed === "p" && PlayerStatus[0] !== GameOver && InputClassObject.KeyboardSpaceBarFunction === 1)
+    else if (InputClassObject.KeyboardCharacterPressed === "p" && PlayerStatus[4] !== GameOver && InputClassObject.KeyboardSpaceBarFunction === 1)
     {
         if (PAUSEgame === false)
         {
@@ -1748,24 +1790,24 @@ let player;
         {
             if (PlayerStatus[4] !== GameOver)
             {
-                if (Level[0] === 5 || Level[0] === 10 || Level[0] === 15 || Level[0] === 20 || Level[0] === 25 || Level[0] === 30)
+                if (Level[4] === 1 || Level[4] === 2 || Level[4] === 3 || Level[4] === 4 || Level[4] === 5 || Level[4] === 6)
                     ScreensClassObject.NextScreenToDisplay = 11;
 
-                if (Level[0] === 30)
+                if (Level[4] === 6)
                 {
                     PlayerStatus[0] = GameOver;
                     PlayerStatus[4] = GameOver;
 
-                    Level[0] = 31;
+                    //Level[4] = 31;
 
                     CrisisWon = true;
                 }
             }
             else
             {
-                Score[2] = Score[0];
-                Level[2] = Level[0];
-                Lines[2] = Lines[0];
+                Score[2] = Score[4];
+                Level[2] = Level[4];
+                Lines[2] = Lines[4];
 
                 CheckForNewHighScores();
                 if (DataClassObject.NewHighScoreRank < 10)  ScreensClassObject.NextScreenToDisplay = 10;
@@ -1778,7 +1820,6 @@ let player;
         {
             ScreensClassObject.NextScreenToDisplay = 3;
             PlayMusic(0);
-
         }
     }
 }
@@ -1799,12 +1840,10 @@ let index;
         DataClassObject.NewHighScoreCharX = 1;
         DataClassObject.NewHighScoreCharY = 0;
 
-        InputClassObject.HighScoreJoyCharIndex = 1;
-
-        //let screenXfix = 30;
+        InputClassObject.HighScoreJoyCharIndex = 0;
 
         let offsetX = 61;
-        screenX = 33;//+screenXfix
+        screenX = 33;
         let offsetY = 50;
         let screenY = 200-10;
         for (index = 1; index < 14; index++) // A-M
@@ -1815,7 +1854,7 @@ let index;
             screenX+=offsetX;
         }
 
-        screenX = 33;//+screenXfix;
+        screenX = 33;
         screenY += offsetY;
         for (index = 14; index < 27; index++) // N-Z
         {
@@ -1825,7 +1864,7 @@ let index;
             screenX+=offsetX;
         }
 
-        screenX = 33;//+screenXfix;
+        screenX = 33;
         screenY += offsetY;
         for (index = 27; index < 40; index++) // a-m
         {
@@ -1835,7 +1874,7 @@ let index;
             screenX+=offsetX;
         }
 
-        screenX = 33;//+screenXfix;
+        screenX = 33;
         screenY += offsetY;
         for (index = 40; index < 53; index++) // n-z
         {
@@ -1845,7 +1884,7 @@ let index;
             screenX+=offsetX;
         }
 
-        screenX = 33;//+screenXfix;
+        screenX = 33;
         screenY += offsetY;
         for (index = 53; index < 66; index++) // 0-9
         {
@@ -2061,7 +2100,7 @@ let index;
         else
             DrawTextOntoCanvas(20, "Please enter your name using the gamepad:", 400, 85, "center", 255, 255, 255, 0, 0, 0, 1);
 
-        if (DataClassObject.NewHighScoreTempName[0] !== "")  DrawTextOntoCanvas(55, ""+DataClassObject.NewHighScoreTempName+"", 400, 148, "center", 255, 255, 255, 0, 0, 0, 1);
+        if (DataClassObject.NewHighScoreNameIndex > 0)  DrawTextOntoCanvas(55, ""+DataClassObject.NewHighScoreTempName+"", 400, 148, "center", 255, 255, 255, 0, 0, 0, 1);
 
         for (index = 1; index < 66; index++)
         {
@@ -2074,7 +2113,8 @@ let index;
 
     if (ScreensClassObject.ScreenFadeAlpha === .99 && ScreensClassObject.ScreenFadeStatus === 1)
     {
-        DataClassObject.HighScoresName[GameMode][DataClassObject.NewHighScoreRank] = DataClassObject.NewHighScoreTempName;
+        if (DataClassObject.NewHighScoreNameIndex > 0)  DataClassObject.HighScoresName[GameMode][DataClassObject.NewHighScoreRank] = DataClassObject.NewHighScoreTempName;
+        else  DataClassObject.HighScoresName[GameMode][DataClassObject.NewHighScoreRank] = " ";
 
         DestroyAllButtons();
 
@@ -2094,13 +2134,13 @@ function DisplayStoryVideo()
         videoFile = document.createElement("video");
         videoFile.setAttribute('playsinline', 'playsinline');
 
-        if (Level[0] === 0)  videoFile.src = "data/videos/0.mp4";
-        else if (Level[0] === 5)  videoFile.src = "data/videos/5.mp4";
-        else if (Level[0] === 10)  videoFile.src = "data/videos/10.mp4";
-        else if (Level[0] === 15)  videoFile.src = "data/videos/15.mp4";
-        else if (Level[0] === 20)  videoFile.src = "data/videos/20.mp4";
-        else if (Level[0] === 25)  videoFile.src = "data/videos/25.mp4";
-        else if (Level[0] === 31)  videoFile.src = "data/videos/30.mp4";
+        if (Level[4] === 0)  videoFile.src = "data/videos/0.mp4";
+        else if (Level[4] === 1)  videoFile.src = "data/videos/5.mp4";
+        else if (Level[4] === 2)  videoFile.src = "data/videos/10.mp4";
+        else if (Level[4] === 3)  videoFile.src = "data/videos/15.mp4";
+        else if (Level[4] === 4)  videoFile.src = "data/videos/20.mp4";
+        else if (Level[4] === 5)  videoFile.src = "data/videos/25.mp4";
+        else if (Level[4] > 5)  videoFile.src = "data/videos/30.mp4";
 
         ScreensClassObject.Video = videoFile;
 
@@ -2114,7 +2154,7 @@ function DisplayStoryVideo()
         document.body.appendChild(ScreensClassObject.Video);
         AudioClassObject.MusicArray[0].pause();
         ScreensClassObject.Video.load();
-        if (AudioClassObject.MusicVolume > 0 || AudioClassObject.SoundVolume > 0)  ScreensClassObject.Video.volume = 1;
+        if (/*AudioClassObject.MusicVolume > 0 || */AudioClassObject.SoundVolume > 0)  ScreensClassObject.Video.volume = AudioClassObject.SoundVolume;
         else  ScreensClassObject.Video.volume = 0.005;
 
         let playPromise = ScreensClassObject.Video.play();
@@ -2152,7 +2192,7 @@ function DisplayStoryVideo()
 
     if (ScreensClassObject.ScreenFadeAlpha === .99 && ScreensClassObject.ScreenFadeStatus === 1)
     {
-        if (Level[0] === 31)
+        if (Level[4] === 6)
         {
             PlayMusic(0);
 

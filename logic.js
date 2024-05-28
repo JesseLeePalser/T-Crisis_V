@@ -49,7 +49,7 @@ let TimeAttack120Mode          = 3;
 let TwentyLineChallengeMode    = 4;
 let CrisisMode                 = 5;
 let FirefoxStoryMode           = 6;
-let GameMode = CrisisMode;
+let GameMode = OriginalMode;
 
 let NewGameGarbageHeight = 0;
 
@@ -478,30 +478,7 @@ function FillPieceBag(player)
 	NextPiece[player] = PieceBag[player][0][2];
 	PieceBagIndex[player] = 1;
 }
-/*
-//-------------------------------------------------------------------------------------------------
-function GetRandomPiece()
-{
-	let random = PieceHistory[Player][0];
 
-	for (let index = 0; index < 3; index++)
-	{
-		PieceHistory[Player][index] = PieceHistory[Player][index+1];
-	}
-
-	let numberOfTries = 0;
-	while ( (PieceHistory[Player][3] === PieceHistory[Player][0]
-	      || PieceHistory[Player][3] === PieceHistory[Player][1]
-	      || PieceHistory[Player][3] === PieceHistory[Player][2])
-		  && (numberOfTries < 3) )
-	{
-		PieceHistory[Player][3] = Math.floor( (Math.random() * 7)+1 );
-		numberOfTries++;
-	}
-
-	return(random);
-}
-*/
 //-------------------------------------------------------------------------------------------------
 function PieceCollision()
 {
@@ -545,10 +522,9 @@ function PieceCollisionDown()
 //-------------------------------------------------------------------------------------------------
 function AddPieceToPlayfieldMemory(TempOrCurrentOrNextOrDropShadow)
 {
-	if ( (DisplayDropShadow === false)&&(TempOrCurrentOrNextOrDropShadow === DropShadow) )
-		return;
+	if (DisplayDropShadow === 0 && TempOrCurrentOrNextOrDropShadow === DropShadow)  return;
 
-        if (InterfaceClassObject.UseOnscreenGamepad !== true && PlayerInput[Player] === Mouse && TempOrCurrentOrNextOrDropShadow === DropShadow)  return;
+	if (InterfaceClassObject.UseOnscreenGamepad !== true && PlayerInput[Player] === Mouse && TempOrCurrentOrNextOrDropShadow === DropShadow)  return;
 
 	let TEMP_Piece = Piece[Player];
 	let TEMP_PieceRotation = PieceRotation[Player];
@@ -637,8 +613,7 @@ function AddPieceToPlayfieldMemory(TempOrCurrentOrNextOrDropShadow)
 //-------------------------------------------------------------------------------------------------
 function DeletePieceFromPlayfieldMemory(CurrentOrDropShadow)
 {
-	if ( (DisplayDropShadow === false)&&(CurrentOrDropShadow === DropShadow) )
-		return;
+	if (DisplayDropShadow === 0 && CurrentOrDropShadow === DropShadow)  return;
 
 	if (PlayerStatus[Player] === FlashingCompletedLines || PlayerStatus[Player] === ClearingCompletedLines)
 		return;
@@ -717,8 +692,6 @@ function DeletePieceFromPlayfieldMemory(CurrentOrDropShadow)
 //-------------------------------------------------------------------------------------------------
 function SetupNewPiece()
 {
-	ComputerPlayerHandicap[Player] = 0;
-
 	PieceMovementDelay[Player] = 0;
 	PieceRotation[Player] = 1;
 
@@ -870,17 +843,17 @@ function MovePieceDown(Force)
 			if (PlayerInput[Player] === CPU) {
 				if (CPUPlayerEnabled === 1) {
 					CPUFrame[Player]++;
-					if (CPUFrame[Player] < 12) {
+					if (CPUFrame[Player] < 3) {
 						return;
 					} else CPUFrame[Player] = 0;
 				} else if (CPUPlayerEnabled === 2) {
 					CPUFrame[Player]++;
-					if (CPUFrame[Player] < 6) {
+					if (CPUFrame[Player] < 2) {
 						return;
 					} else CPUFrame[Player] = 0;
 				} else if (CPUPlayerEnabled === 3) {
 					CPUFrame[Player]++;
-					if (CPUFrame[Player] < 3) {
+					if (CPUFrame[Player] < 1) {
 						return;
 					} else CPUFrame[Player] = 0;
 				}
@@ -1048,10 +1021,13 @@ function MovePieceLeft()
             GameDisplayChanged = true;
 
             if (PlayerInput[Player] !== CPU)  PlaySoundEffect(2);
+
+			return true;
         }
         else
         {
             PiecePlayfieldX[Player]++;
+			return false;
         }
     }
 }
@@ -1076,10 +1052,13 @@ function MovePieceRight()
             GameDisplayChanged = true;
 
             if (PlayerInput[Player] !== CPU)  PlaySoundEffect(2);
+
+			return true;
         }
         else
         {
             PiecePlayfieldX[Player]--;
+			return false;
         }
     }
 }
@@ -1105,7 +1084,7 @@ function SetupForNewGame()
 	if (GameMode === CrisisMode)
 	{
 		PlaySoundEffect(9);
-		AudioClassObject.MusicArray[0].pause();
+		if (AudioClassObject.MusicVolume !== 0)  AudioClassObject.MusicArray[0].pause();
 		ThinkRussianTimer = 380;
 	}
 	else  ThinkRussianTimer = 0;
@@ -1311,8 +1290,9 @@ function SetupForNewGame()
 
         if (FirefoxStoryModeStarted === false)
         {
-            Level[4] = 24;
-            Lines[4] = 249;
+			Level[4] = 5;
+            Lines[4] = 299;
+			TwentyLineCounter[4] = 1
         }
     }
 /*
@@ -1637,12 +1617,12 @@ let numberOfCompletedLines = 0;
                 let requiredNumberOfLinesForAttack = 1;
                 if (GameMode === FirefoxStoryMode)
                 {
-                    if (Level[0] < 10)  requiredNumberOfLinesForAttack = 2;
-                    else if (Level[0] < 25)  requiredNumberOfLinesForAttack = 1;
+                    if (Level[4] < 2)  requiredNumberOfLinesForAttack = 2;
+                    else if (Level[4] < 3)  requiredNumberOfLinesForAttack = 1;
                     else  requiredNumberOfLinesForAttack = 0;
                 }
 							
-				if (boxTotal === 10 && numberOfCompletedLines > requiredNumberOfLinesForAttack)
+				if ( boxTotal === 10 && numberOfCompletedLines > requiredNumberOfLinesForAttack && (GameMode === CrisisMode || GameMode === FirefoxStoryMode) )
 				{
 					for (let attackY = 1; attackY < 12; attackY++)
 						for (attackX = 0; attackX < 10; attackX++)
@@ -1733,8 +1713,6 @@ let thereWasACompletedLine = false;
 
 				Lines[Player]++;
 
-				if (ScreensClassObject.DEBUG === 1 && GameMode === CrisisMode)  Lines[Player] = (Level[Player]+1) * 10;
-
 				if (TwentyLineCounter[Player] > 0)  TwentyLineCounter[Player]--;
 
 				if (Lines[Player] % 10 === 0)
@@ -1755,7 +1733,7 @@ let thereWasACompletedLine = false;
 							if (Level[Player] === 7 && Crisis7BGMPlayed === false)
 							{
 								PlaySoundEffect(12);
-								//PlayMusic(4);
+								PlayMusic(4);
 								Crisis7BGMPlayed = true;
 							}
 
@@ -1779,16 +1757,21 @@ let thereWasACompletedLine = false;
 					{
 						if (Level[Player] < 10000)
 						{
-							Level[Player]++;
 							if (TimeToDropPiece[Player] > 3)  TimeToDropPiece[Player]-=2;
 							PlaySoundEffect(8);
-                                                        
-                            if (GameMode === FirefoxStoryMode && Player === 0)
-                            {
-                                if (Level[0] === 5 || Level[0] === 10 || Level[0] === 15 || Level[0] === 20
-                                 || Level[0] === 25 || Level[0] === 30)  ScreensClassObject.ScreenFadeStatus = 1;
 
+
+                            if (GameMode === FirefoxStoryMode && Player === 4)
+                            {
+								if (TwentyLineCounter[4] < 1) {
+									Level[4]++;
+
+									if (Level[4] === 1 || Level[4] === 2 || Level[4] === 3 || Level[4] === 4
+										|| Level[4] === 5 || Level[4] === 6) ScreensClassObject.ScreenFadeStatus = 1;
+								}
                             }
+                            else  Level[Player]++;
+
 						}
 					}
 				}
@@ -1827,7 +1810,7 @@ function RandomizeAttackLines(player)
 //-------------------------------------------------------------------------------------------------
 function AddAnAttackLineToEnemiesPlayfield()
 {
-let TEMP_Player = Player;
+	let TEMP_Player = Player;
 	let x;
 	let y;
 
@@ -1998,7 +1981,7 @@ function RunTetriGameEngine()
 		{
 			if (PlayerStatus[Player] !== GameOver)
 			{
-				ComputerPlayerHandicap[Player]++;
+				//ComputerPlayerHandicap[Player]++;
 
 				if (ScreensClassObject.DEBUG === false)  PieceDropTimer[Player]++;
 
@@ -2022,239 +2005,195 @@ function RunTetriGameEngine()
 
 					GameDisplayChanged = true;
 				}
-				else if (PlayerStatus[Player] === PieceFalling)
-				{
-					if (GameMode === TwentyLineChallengeMode && TwentyLineCounter[Player] === 0)
-					{
-						PlayerStatus[Player] = GameOver;
-					}
+				else if (PlayerStatus[Player] === PieceFalling) {
+					let attack = false;
 
-					if (PieceDropTimer[Player] > TimeToDropPiece[Player])
-					{
-						MovePieceDown(false);
-					}
-
-					if (PlayerInput[Player] === CPU)
-					{
-						ComputeComputerPlayerMove();
-					}
-					else if (PlayerInput[Player] !== Mouse && PlayerInput[Player] > -1 && PlayerInput[Player] < 7)
-					{
-						if (PressingUPAction === Rotate)
-						{
-							if (InputClassObject.JoystickDirection[ PlayerInput[Player] ] === InputClassObject.UP)
-							{
-								if (RotateDirection[Player] === 0)
-								{
-									if (UPActionTaken[Player] === false)  RotatePieceCounterClockwise();
-									UPActionTaken[Player] = true;
-								}
-								else if (RotateDirection[Player] === 1)
-								{
-									if (UPActionTaken[Player] === false)  RotatePieceClockwise();
-									UPActionTaken[Player] = true;
-								}
-							}
-							else  UPActionTaken[Player] = false;
-						}
-						else if (PressingUPAction === Fall)
-						{
-							if (InputClassObject.JoystickDirection[ PlayerInput[Player] ] === InputClassObject.UP)
-							{
-								if (UPActionTaken[Player] === false)
-								{
-									MovePieceDownFast();
-								}
-
-								UPActionTaken[Player] = true;
-							}
-							else  UPActionTaken[Player] = false;
-						}
-						else if (PressingUPAction === DropAndDrag)
-						{
-							if (InputClassObject.JoystickDirection[ PlayerInput[Player] ] === InputClassObject.UP)
-							{
-								if (UPActionTaken[Player] === false)
-								{
-									MovePieceDownFastDropAndDrag();
-								}
-
-								UPActionTaken[Player] = true;
-							}
-							else  UPActionTaken[Player] = false;
-						}
-						
-                        if (InputClassObject.KeyboardSpaceBarFunction === 1 && InputClassObject.KeyboardCharacterPressed === "_")
-                        {
-                            if (SpaceBarActionTaken[Player] === false)
-                            {
-                                MovePieceDownFast();
-                            }
-                            SpaceBarActionTaken[Player] = true;
-                        }
-
-                        if (InputClassObject.KeyboardSpaceBarFunction === 1 && InputClassObject.KeyboardCharacterPressed !== "_")
-                            SpaceBarActionTaken[Player] = false;
-                        
-						if (PieceDropTimer[Player] > TimeToDropPiece[Player])
-						{
-							if (InputClassObject.JoystickDirection[ PlayerInput[Player] ] !== InputClassObject.DOWN)
-							{
-								DropBonus[Player] = 0;
-							}
-							else  DropBonus[Player]++;
-						}
-	
-						if (InputClassObject.JoystickButtonOne[ PlayerInput[Player] ] === true)
-						{
-							if (PieceRotated1[Player] === false)
-							{
-								RotatePieceCounterClockwise();
-								PieceRotated1[Player] = true;
-							}
-						}
-						else  PieceRotated1[Player] = false;
-
-						if (InputClassObject.JoystickButtonTwo[ PlayerInput[Player] ] === true)
-						{
-							if (PieceRotated2[Player] === false)
-							{
-								RotatePieceClockwise();
-								PieceRotated2[Player] = true;
-							}
-						}
-						else  PieceRotated2[Player] = false;
-
-						if (InputClassObject.JoystickDirection[ PlayerInput[Player] ] === InputClassObject.LEFT)  MovePieceLeft();
-						else if (InputClassObject.JoystickDirection[ PlayerInput[Player] ] === InputClassObject.RIGHT)  MovePieceRight();
-						else  PieceMovementDelay[Player] = 0;
-					}
-					else if(InterfaceClassObject.UseOnscreenGamepad === true && PlayerInput[Player] === Mouse)
-					{
-						if (InterfaceClassObject.GamepadSelectedByPlayer === 0){
-							RotatePieceClockwise();
-							InterfaceClassObject.GamepadSelectedByPlayer = -1;
-						}
-						else if (InterfaceClassObject.GamepadSelectedByPlayer === 1){
-							MovePieceRight();
-						}
-						else if (InterfaceClassObject.GamepadSelectedByPlayer === 2){
-							MovePieceDown();
-						}
-						else if (InterfaceClassObject.GamepadSelectedByPlayer === 3){
-							MovePieceLeft();
-						}
-						else {
-							InterfaceClassObject.GamepadSelectedByPlayer = -1;
-						}
-					}
-					else if (InterfaceClassObject.UseOnscreenGamepad === false && PlayerInput[Player] === Mouse)
-					{      
-                        boxScreenX = PlayersPlayfieldScreenX[Player]-59;
-                        boxScreenY = PlayersPlayfieldScreenY[Player]-212;
-                        for (y = 0; y < 26; y++)
-                        {
-                            for (x = 2; x < 12; x++)
-                            {
-                                if (x === PiecePlayfieldX[Player] && y === PiecePlayfieldY[Player])
-                                {
-                                    PieceMouseScreenX = boxScreenX;
-                                    PieceMouseScreenY = boxScreenY;
-                                }
-
-                                boxScreenX+=13;
-                            }
-
-                            boxScreenX = PlayersPlayfieldScreenX[Player]-59;
-                            boxScreenY+=18;
-                        }
-
-                        boxScreenX = PlayersPlayfieldScreenX[Player]-59;
-                        boxScreenY = PlayersPlayfieldScreenY[Player]-212;
-                        for (y = 0; y < 26; y++)
-                        {
-                            for (x = 1; x < 12; x++)
-                            {
-                                if ( InputClassObject.MouseTouchX > boxScreenX && InputClassObject.MouseTouchX < (boxScreenX+13)
-                                && InputClassObject.MouseTouchY > boxScreenY && InputClassObject.MouseTouchY < (boxScreenY+18) )
-                                {
-									MouseMovePlayfieldX = x;
-									MouseMovePlayfieldY = y;
-                                }
-
-                                boxScreenX+=13;
-                            }
-
-                            boxScreenX = PlayersPlayfieldScreenX[Player]-59;
-                            boxScreenY+=18;
-                        }
-
-                        if (InitializeClassObject.Browser !== "Mobile" && InputClassObject.MouseButtonDown === true)
-                        {
-                            if ( (MouseMovePlayfieldY < PiecePlayfieldY[Player])
-                            || (PiecePlayfieldX[Player] === MouseMovePlayfieldX && PiecePlayfieldY[Player] === MouseMovePlayfieldY) )
-                            {
-                                if (RotateDirection[Player] === 0)
-                                {
-                                    if (UPActionTaken[Player] === false)  RotatePieceCounterClockwise();
-                                    UPActionTaken[Player] = true;
-                                }
-                                else if (RotateDirection[Player] === 1)
-                                {
-                                    if (UPActionTaken[Player] === false)  RotatePieceClockwise();
-                                    UPActionTaken[Player] = true;
-                                }
-                            }
-                            else if (PiecePlayfieldX[Player] === MouseMovePlayfieldX && MouseMovePlayfieldY > PiecePlayfieldY[Player])
-                            {
-                                MovePieceDown();
-                                UPActionTaken[Player] = true;
-                            }
-                            else if (MouseMovePlayfieldX < PiecePlayfieldX[Player])
-                            {
-                                MovePieceLeft();
-                                UPActionTaken[Player] = true;
-                            }
-                            else if (MouseMovePlayfieldX > PiecePlayfieldX[Player])
-                            {
-                                MovePieceRight();
-                                UPActionTaken[Player] = true;
-                            }
-                        }
-                        else  UPActionTaken[Player] = false;
-                    }
-
-					if ( (GameMode === CrisisMode || GameMode === FirefoxStoryMode) && ScreensClassObject.DEBUG === false)
-					{
-						for (x = 0; x < 10; x++)
-						{
-							if (AttackLines[Player][x][11] > 0)
-							{
+					if (GameMode === CrisisMode || GameMode === FirefoxStoryMode) {
+						for (x = 0; x < 10; x++) {
+							if (AttackLines[Player][x][11] > 0) {
 								x = 100;
+								attack = true;
 								AddAnAttackLineToEnemiesPlayfield();
 							}
 						}
 
-                        let numberOfPlayersAlive = 5;
-                        for (let player = 0; player < 5; player++)
-                        {
-                            if (PlayerStatus[player] === GameOver)  numberOfPlayersAlive--;
-                        }
+						let numberOfPlayersAlive = 5;
+						for (let player = 0; player < 5; player++) {
+							if (PlayerStatus[player] === GameOver) numberOfPlayersAlive--;
+						}
 
-                        if (  numberOfPlayersAlive === 1 && ( (GameMode === CrisisMode && PlayersCanJoin === false) || GameMode === FirefoxStoryMode )  )
-						{
-							if (CrisisModeOnePlayerLeftPlayfieldCleared === false && PlayerStatus[Player] === PieceFalling)
-							{
-								DeletePieceFromPlayfieldMemory(DropShadow);
-                                AddPieceToPlayfieldMemory(Current);
+						if (numberOfPlayersAlive === 1 && attack === false) {
+							if (CrisisModeTimer < 300) CrisisModeTimer++;
+							else {
+								if (AddAnIncompleteLineToPlayfieldCrisisMode() === true) {
+									CrisisModeTimer = 0;
 
-								PlayerStatus[Player] = ClearingPlayfield;
+									attack = true;
+								}
+							}
+						}
+					}
+
+					if (attack === false) {
+						if (GameMode === TwentyLineChallengeMode && TwentyLineCounter[Player] === 0) {
+							PlayerStatus[Player] = GameOver;
+						}
+
+						if (PieceDropTimer[Player] > TimeToDropPiece[Player]) {
+							MovePieceDown(false);
+						} else {
+							if (PlayerInput[Player] === CPU) {
+								ComputeComputerPlayerMove();
+							} else if (PlayerInput[Player] !== Mouse && PlayerInput[Player] > -1 && PlayerInput[Player] < 7) {
+								if (PressingUPAction === Rotate) {
+									if (InputClassObject.JoystickDirection[PlayerInput[Player]] === InputClassObject.UP) {
+										if (RotateDirection[Player] === 0) {
+											if (UPActionTaken[Player] === false) RotatePieceCounterClockwise();
+											UPActionTaken[Player] = true;
+										} else if (RotateDirection[Player] === 1) {
+											if (UPActionTaken[Player] === false) RotatePieceClockwise();
+											UPActionTaken[Player] = true;
+										}
+									} else UPActionTaken[Player] = false;
+								} else if (PressingUPAction === Fall) {
+									if (InputClassObject.JoystickDirection[PlayerInput[Player]] === InputClassObject.UP) {
+										if (UPActionTaken[Player] === false) {
+											MovePieceDownFast();
+										}
+
+										UPActionTaken[Player] = true;
+									} else UPActionTaken[Player] = false;
+								} else if (PressingUPAction === DropAndDrag) {
+									if (InputClassObject.JoystickDirection[PlayerInput[Player]] === InputClassObject.UP) {
+										if (UPActionTaken[Player] === false) {
+											MovePieceDownFastDropAndDrag();
+										}
+
+										UPActionTaken[Player] = true;
+									} else UPActionTaken[Player] = false;
+								}
+
+								if (InputClassObject.KeyboardSpaceBarFunction === 1 && InputClassObject.KeyboardCharacterPressed === "_") {
+									if (SpaceBarActionTaken[Player] === false) {
+										MovePieceDownFast();
+									}
+									SpaceBarActionTaken[Player] = true;
+								}
+
+								if (InputClassObject.KeyboardSpaceBarFunction === 1 && InputClassObject.KeyboardCharacterPressed !== "_")
+									SpaceBarActionTaken[Player] = false;
+
+								if (PieceDropTimer[Player] > TimeToDropPiece[Player]) {
+									if (InputClassObject.JoystickDirection[PlayerInput[Player]] !== InputClassObject.DOWN) {
+										DropBonus[Player] = 0;
+									} else DropBonus[Player]++;
+								}
+
+								if (InputClassObject.JoystickButtonOne[PlayerInput[Player]] === true) {
+									if (PieceRotated1[Player] === false) {
+										RotatePieceCounterClockwise();
+										PieceRotated1[Player] = true;
+									}
+								} else PieceRotated1[Player] = false;
+
+								if (InputClassObject.JoystickButtonTwo[PlayerInput[Player]] === true) {
+									if (PieceRotated2[Player] === false) {
+										RotatePieceClockwise();
+										PieceRotated2[Player] = true;
+									}
+								} else PieceRotated2[Player] = false;
+
+								if (InputClassObject.JoystickDirection[PlayerInput[Player]] === InputClassObject.LEFT) MovePieceLeft();
+								else if (InputClassObject.JoystickDirection[PlayerInput[Player]] === InputClassObject.RIGHT) MovePieceRight();
+								else PieceMovementDelay[Player] = 0;
+							} else if (InterfaceClassObject.UseOnscreenGamepad === true && PlayerInput[Player] === Mouse) {
+								if (InterfaceClassObject.GamepadSelectedByPlayer === 0) {
+									if (PieceRotated1[Player] === false) {
+										RotatePieceClockwise();
+										{
+											PieceRotated1[Player] = true
+										}
+									}
+								} else if (InterfaceClassObject.GamepadSelectedByPlayer === 1) {
+									MovePieceRight();
+								} else if (InterfaceClassObject.GamepadSelectedByPlayer === 2) {
+									MovePieceDown();
+								} else if (InterfaceClassObject.GamepadSelectedByPlayer === 3) {
+									MovePieceLeft();
+								} else {
+									PieceRotated1[Player] = false;
+								}
+							} else if (InterfaceClassObject.UseOnscreenGamepad === false && PlayerInput[Player] === Mouse) {
+								boxScreenX = PlayersPlayfieldScreenX[Player] - 59;
+								boxScreenY = PlayersPlayfieldScreenY[Player] - 212;
+								for (y = 0; y < 26; y++) {
+									for (x = 2; x < 12; x++) {
+										if (x === PiecePlayfieldX[Player] && y === PiecePlayfieldY[Player]) {
+											PieceMouseScreenX = boxScreenX;
+											PieceMouseScreenY = boxScreenY;
+										}
+
+										boxScreenX += 13;
+									}
+
+									boxScreenX = PlayersPlayfieldScreenX[Player] - 59;
+									boxScreenY += 18;
+								}
+
+								boxScreenX = PlayersPlayfieldScreenX[Player] - 59;
+								boxScreenY = PlayersPlayfieldScreenY[Player] - 212;
+								for (y = 0; y < 26; y++) {
+									for (x = 1; x < 12; x++) {
+										if (InputClassObject.MouseTouchX > boxScreenX && InputClassObject.MouseTouchX < (boxScreenX + 13)
+											&& InputClassObject.MouseTouchY > boxScreenY && InputClassObject.MouseTouchY < (boxScreenY + 18)) {
+											MouseMovePlayfieldX = x;
+											MouseMovePlayfieldY = y;
+										}
+
+										boxScreenX += 13;
+									}
+
+									boxScreenX = PlayersPlayfieldScreenX[Player] - 59;
+									boxScreenY += 18;
+								}
+
+								if (InitializeClassObject.Browser !== "Mobile" && InputClassObject.MouseButtonDown === true) {
+									if ((MouseMovePlayfieldY < PiecePlayfieldY[Player])
+										|| (PiecePlayfieldX[Player] === MouseMovePlayfieldX && PiecePlayfieldY[Player] === MouseMovePlayfieldY)) {
+										if (RotateDirection[Player] === 0) {
+											if (UPActionTaken[Player] === false) RotatePieceCounterClockwise();
+											UPActionTaken[Player] = true;
+										} else if (RotateDirection[Player] === 1) {
+											if (UPActionTaken[Player] === false) RotatePieceClockwise();
+											UPActionTaken[Player] = true;
+										}
+									} else if (PiecePlayfieldX[Player] === MouseMovePlayfieldX && MouseMovePlayfieldY > PiecePlayfieldY[Player]) {
+										MovePieceDown();
+										UPActionTaken[Player] = true;
+									} else if (MouseMovePlayfieldX < PiecePlayfieldX[Player]) {
+										MovePieceLeft();
+										UPActionTaken[Player] = true;
+									} else if (MouseMovePlayfieldX > PiecePlayfieldX[Player]) {
+										MovePieceRight();
+										UPActionTaken[Player] = true;
+									}
+								} else UPActionTaken[Player] = false;
 							}
 
-							if (CrisisModeTimer < 300)  CrisisModeTimer++;
-							else
-							{
-								if (AddAnIncompleteLineToPlayfieldCrisisMode() === true)  CrisisModeTimer = 0;
+							if ((GameMode === CrisisMode || GameMode === FirefoxStoryMode) && ScreensClassObject.DEBUG === false) {
+								let numberOfPlayersAlive = 5;
+								for (let player = 0; player < 5; player++) {
+									if (PlayerStatus[player] === GameOver) numberOfPlayersAlive--;
+								}
+
+								if (numberOfPlayersAlive === 1 && ((GameMode === CrisisMode && PlayersCanJoin === false) || GameMode === FirefoxStoryMode)) {
+									if (CrisisModeOnePlayerLeftPlayfieldCleared === false && PlayerStatus[Player] === PieceFalling) {
+										DeletePieceFromPlayfieldMemory(DropShadow);
+										AddPieceToPlayfieldMemory(Current);
+
+										PlayerStatus[Player] = ClearingPlayfield;
+									}
+								}
 							}
 						}
 					}
@@ -2295,8 +2234,6 @@ function RunTetriGameEngine()
 				if (PlayerStatus[2] !== GameOver)  playersAlive++;
 				if (PlayerStatus[3] !== GameOver)  playersAlive++;
 				if (PlayerStatus[4] !== GameOver)  playersAlive++;
-
-				if (playersAlive > 1)  Score[Player] = 0;
 			}
 
 			if (BlockAttackTransparency[Player] > 0)  BlockAttackTransparency[Player] = (BlockAttackTransparency[Player] - .05);
@@ -2315,9 +2252,9 @@ let tempCPUPlayerEnabled = CPUPlayerEnabled;
 
     if (GameMode === FirefoxStoryMode)
     {
-        if (Level[0] < 10)  CPUPlayerEnabled = 1;
-        else if (Level[0] < 20)  CPUPlayerEnabled = 2;
-        else if (Level[0] < 30)  CPUPlayerEnabled = 3;
+        if (Level[4] < 2)  CPUPlayerEnabled = 1;
+        else if (Level[4] < 3)  CPUPlayerEnabled = 2;
+        else if (Level[4] < 4)  CPUPlayerEnabled = 3;
     }
 
     if (BestMoveCalculated[Player] === false) {
@@ -2420,17 +2357,19 @@ let tempCPUPlayerEnabled = CPUPlayerEnabled;
 		}
 
 		if (GameMode !== FirefoxStoryMode && CPUPlayerEnabled > 0 && CPUPlayerEnabled < 4) {
+			ComputerPlayerHandicap[Player]++;
+
 			let timeToWrongMove = 0;
 
-			if (CPUPlayerEnabled === 1) timeToWrongMove = (2 * 60);
-			if (CPUPlayerEnabled === 2) timeToWrongMove = (4 * 60);
-			if (CPUPlayerEnabled === 3) timeToWrongMove = (16 * 60);
+			if (CPUPlayerEnabled === 1) timeToWrongMove = (3);
+			if (CPUPlayerEnabled === 2) timeToWrongMove = (3*3);
+			if (CPUPlayerEnabled === 3) timeToWrongMove = (3*3*3);
 
 			if (ComputerPlayerHandicap[Player] > timeToWrongMove) {
 				let randomPosX = Math.floor((Math.random() * (PlayfieldEndX[Player] - 1)));
 				let randomRot = Math.floor(Math.random() * (1 + (MaxRotationArray[Piece[Player]])));
 
-				MoveCompletedLines[Player][randomPosX][randomRot] = 999999999;
+				MoveCompletedLines[Player][randomPosX][randomRot] = 9999999;
 
 				ComputerPlayerHandicap[Player] = 0;
 			}
@@ -2472,10 +2411,16 @@ let tempCPUPlayerEnabled = CPUPlayerEnabled;
         if (PieceRotation[Player] < BestRotation[Player])  RotatePieceClockwise();
         else if (PieceRotation[Player] > BestRotation[Player])  RotatePieceCounterClockwise();
 
-        if (BestMoveX[Player] < PiecePlayfieldX[Player])
-            MovePieceLeft();
-        else if (BestMoveX[Player] > PiecePlayfieldX[Player])
-            MovePieceRight();
+        if (BestMoveX[Player] < PiecePlayfieldX[Player]) {
+			if (MovePieceLeft() === false) {
+				MovePieceDown(false);
+			}
+		}
+        else if (BestMoveX[Player] > PiecePlayfieldX[Player]) {
+			if (MovePieceRight() === false) {
+				MovePieceDown(false);
+			}
+		}
         else if (PieceRotation[Player] === BestRotation[Player])
         {
             if (CPUPlayerEnabled !== 4)  MovePieceDown(true);

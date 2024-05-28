@@ -21,115 +21,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // "audio.js"...
 
 //--------------------------------------------------------------------------------------------------------------
-function LoopMusicFixForFirefox()
-{
-    PlayMusic(0);
-}
-
-//--------------------------------------------------------------------------------------------------------------
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-//--------------------------------------------------------------------------------------------------------------
-function CheckEffectLoaded()
-{
-    AudioClassObject.NumberOfLoadedSounds++;
-}
-
-//--------------------------------------------------------------------------------------------------------------
-function LoadIndividualSound(index, path)
-{
-    AudioClassObject.TotalNumberOfSounds++;
-
-    sleep(AudioClassObject.Time*AudioClassObject.Multiplier).then(() => {
-        AudioClassObject.SoundArray[index] = document.createElement("Audio");
-        AudioClassObject.SoundArray[index].src = path;
-        AudioClassObject.SoundArray[index].preLoad = "auto";
-        AudioClassObject.SoundArray[index].addEventListener("canplay", CheckEffectLoaded);
-    });
-
-    AudioClassObject.Multiplier++;
-}
-
-//--------------------------------------------------------------------------------------------------------------
-function CheckMusicLoaded()
-{
-    AudioClassObject.NumberOfLoadedMusics++;
-}
-
-//--------------------------------------------------------------------------------------------------------------
-function LoadIndividualMusic(index, path)
-{
-    AudioClassObject.TotalNumberOfMusics++;
-
-    sleep(AudioClassObject.Time*AudioClassObject.Multiplier).then(() => {
-        AudioClassObject.MusicArray[index] = document.createElement("Audio");
-        AudioClassObject.MusicArray[index].src = path;
-        AudioClassObject.MusicArray[index].volume = AudioClassObject.MusicVolume;
-        AudioClassObject.MusicArray[index].preload = "auto";
-
-        AudioClassObject.MusicArray[index].addEventListener("canplaythrough", CheckMusicLoaded);
-    });
-
-    AudioClassObject.multiplier++;
-}
-
-//--------------------------------------------------------------------------------------------------------------
-function LoadSound()
-{/*
-    let soundFormat = "mp3";
-
-    AudioClassObject.Multiplier = 1;
-    AudioClassObject.Time = 250;
-
-//    if (InitializeClassObject.BrowserMobileSafari === true){
-//        soundFormat = "wav";
-//    }
-
-//    LoadIndividualSound(0, "./data/audio/effects/MenuClick."+soundFormat);
-    LoadIndividualSound(1, "./data/audio/effects/MenuMove."+soundFormat);
-    LoadIndividualSound(2, "./data/audio/effects/MovePiece."+soundFormat);
-    LoadIndividualSound(3, "./data/audio/effects/PieceCollision."+soundFormat);
-    LoadIndividualSound(4, "./data/audio/effects/PieceDrop."+soundFormat);
-    LoadIndividualSound(5, "./data/audio/effects/PieceRotate."+soundFormat);
-    LoadIndividualSound(6, "./data/audio/effects/LineCleared."+soundFormat);
-    LoadIndividualSound(7, "./data/audio/effects/TetriCleared."+soundFormat);
-    LoadIndividualSound(8, "./data/audio/effects/LevelUp."+soundFormat);
-    LoadIndividualSound(9, "./data/audio/effects/MustThinkInRussian."+soundFormat);
-    LoadIndividualSound(10, "./data/audio/effects/IncomingLine."+soundFormat);
-    LoadIndividualSound(11, "./data/audio/effects/GameOver."+soundFormat);
-    LoadIndividualSound(12, "./data/audio/effects/Crack."+soundFormat);
-    LoadIndividualSound(13, "./data/audio/effects/ShallWePlayAGame."+soundFormat);
-    LoadIndividualSound(14, "./data/audio/effects/Sword."+soundFormat);
-
-    AudioClassObject.Multiplier = 1;
-    AudioClassObject.Time = 250;
-
-//    LoadIndividualMusic(0, "./data/audio/music/Track-01-BGM."+soundFormat);
-
-//    AudioClassObject.SoundArray[0] = document.createElement("Audio");
-//    AudioClassObject.SoundArray[0].src = path;
-//    AudioClassObject.SoundArray[0].preLoad = "auto";
-//    AudioClassObject.SoundArray[0].addEventListener("canplay", CheckEffectLoaded);
-
-//    AudioClassObject.MusicArray[0] = document.createElement("Audio"); */
-}
-
-//--------------------------------------------------------------------------------------------------------------
 function PlaySoundEffect(index)
 {
     let soundFormat = "mp3";
     let soundFile = " ";
 
-//    if (InitializeClassObject.BrowserMobileSafari === true){
-//        soundFormat = "wav";
-//    }
-
     if (ThinkRussianTimer > 0)  return;
     
-//    if ( index > (AudioClassObject.TotalNumberOfSounds-1) )  return;
-        
     if (AudioClassObject.SoundVolume === 0)  return;
 
     if (index === 0)  soundFile = "./data/audio/effects/MenuClick."+soundFormat;
@@ -147,14 +45,11 @@ function PlaySoundEffect(index)
     else if (index === 12)  soundFile = "./data/audio/effects/Crack."+soundFormat;
     else if (index === 13)  soundFile = "./data/audio/effects/ShallWePlayAGame."+soundFormat;
     else if (index === 14)  soundFile = "./data/audio/effects/Sword."+soundFormat;
+    else if (index === 15)  soundFile = "./data/audio/effects/Title-Speech."+soundFormat;
 
     AudioClassObject.SoundArray[0] = document.createElement("Audio");
     AudioClassObject.SoundArray[0].src = soundFile;
     AudioClassObject.SoundArray[0].preLoad = "auto";
-
-//    AudioClassObject.SoundArray[0].setAttribute('src', soundFile);
-
-//    AudioClassObject.SoundArray[0].load();
 
     AudioClassObject.SoundArray[0].volume = AudioClassObject.SoundVolume;
     AudioClassObject.SoundArray[0].currentTime = 0;
@@ -164,13 +59,7 @@ function PlaySoundEffect(index)
 //--------------------------------------------------------------------------------------------------------------
 function PlayMusic(index)
 {
-//    if (InitializeClassObject.BrowserMobileIOSSafari === true)  return;
-
     let soundFormat = "mp3";
-
-//    if (InitializeClassObject.BrowserMobileSafari === true){
-//        soundFormat = "wav";
-//    }
 
     if (AudioClassObject.MusicVolume === 0)  return;
 
@@ -185,12 +74,11 @@ function PlayMusic(index)
         AudioClassObject.MusicArray[0].preLoad = "auto";
     }
 
-    AudioClassObject.MusicArray[0].addEventListener("ended", LoopMusicFixForFirefox, false);
-
     AudioClassObject.MusicArray[0].currentTime = 0;
 
     AudioClassObject.MusicArray[0].volume = AudioClassObject.MusicVolume;
 
+    AudioClassObject.MusicArray[0].loop = true;
     AudioClassObject.MusicArray[0].play();
     AudioClassObject.AtLeastOneMusicHasPlayed = true;
 }

@@ -55,14 +55,8 @@ function InitSettings()
     else  InitializeClassObject.Browser = "Desktop";
 
     let canvas = document.createElement('canvas');
-    let canvasFallingLetters = document.createElement('canvas');
 
     if ( iOS() === true )  InitializeClassObject.BrowserMobileSSafari = true;
-
-    //Browser = "Mobile";
-    //UseOnscreenGamepad = true;
-
-    //InterfaceClassObject.UseOnscreenGamepad = true;
 
     canvas.id = "ScreenCanvas";
     canvas.width = 800;
@@ -82,7 +76,6 @@ function InitSettings()
         canvas.style.left = "50%";
     }
     document.body.appendChild(canvas);
-    document.body.appendChild(canvasFallingLetters);
 
     InitializeClassObject.ctxCanvas = document.getElementById("ScreenCanvas");
     InitializeClassObject.ctx = InitializeClassObject.ctxCanvas.getContext("2d");
@@ -90,14 +83,7 @@ function InitSettings()
     VisualsClassObject.screenWidth = 800;
     VisualsClassObject.screenHeight = 480;
 
-    InputClassObject.USBGamepadsSupported = true;//navigator.getGamepads || !!navigator.webkitGetGamepads || !!navigator.webkitGamepads;
-
     for (let index = 0; index < 5; index++)  InputClassObject.GameControllerInitialized[index] = false;
-
-//    if (InitializeClassObject.Browser === "Mobile")
-//    {
-//        ToggleFullScreen();
-//    }
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -159,7 +145,6 @@ function Init()
     LoadOptions();
 
     LoadImages();
-    LoadSound();
 
     let canvas = document.getElementById("ScreenCanvas");
 
@@ -199,11 +184,6 @@ function Init()
             let rect = canvas.getBoundingClientRect();
 
             InputClassObject.MouseButtonDown = false;
-
-            //InterfaceClassObject.GamepadSelectedByPlayer = -1;
-            //InterfaceClassObject.GamepadAnimationTimer[1] = -1;
-            //InterfaceClassObject.GamepadAnimationTimer[2] = -1;
-            //InterfaceClassObject.GamepadAnimationTimer[3] = -1;
 
             InputClassObject.MouseTouchX = Math.floor(event.touches[0].clientX/*event.clientX*/ - rect.left);
             InputClassObject.MouseTouchX = (Math.floor(InputClassObject.MouseTouchX * (800 / VisualsClassObject.BrowserWidth)));
@@ -256,6 +236,8 @@ function Init()
         InputClassObject.JoystickButtonTwo[index] = false;
     }
 
+    for (let index = 0; index < 5; index++)  InputClassObject.StickDriftDisable[index] = false;
+
     InitializeClassObject.NextSecond = new Date().getTime()+1000;
 
     draw();
@@ -272,5 +254,25 @@ function draw()
 {
     GameLoop();
 
-    RequestAnimFrame(draw, InitializeClassObject.Framerate);
+    if (ScreensClassObject.ScreenToDisplay !== 8 && ScreensClassObject.ScreenToDisplay !== 9 && ScreensClassObject.ScreenToDisplay !== 12){
+        RequestAnimFrame(draw, 60);//InitializeClassObject.Framerate);
+    }
+    else if (ScreensClassObject.ScreenToDisplay === 8){
+        if (CPUPlayerEnabled === 0){
+            RequestAnimFrame(draw, 45);
+        }
+        else if (CPUPlayerEnabled === 1){
+            RequestAnimFrame(draw, 30);
+        }
+        else if (CPUPlayerEnabled === 2){
+            RequestAnimFrame(draw, 45);
+        }
+        else if (CPUPlayerEnabled === 3){
+            RequestAnimFrame(draw, 60);
+        }
+        else if (CPUPlayerEnabled === 4){
+            RequestAnimFrame(draw, 75);
+        }
+    }
+    else  RequestAnimFrame(draw, 60);
 }

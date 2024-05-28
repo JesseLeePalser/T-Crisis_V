@@ -335,15 +335,15 @@ function InitializeHighScores()
         }
     }
 
-    DataClassObject.HighScoresLevel[6][0] = 31;
-    DataClassObject.HighScoresLevel[6][1] = 31;
-    DataClassObject.HighScoresLevel[6][2] = 30;
-    DataClassObject.HighScoresLevel[6][3] = 25;
-    DataClassObject.HighScoresLevel[6][4] = 25;
-    DataClassObject.HighScoresLevel[6][5] = 20;
-    DataClassObject.HighScoresLevel[6][6] = 15;
-    DataClassObject.HighScoresLevel[6][7] = 10;
-    DataClassObject.HighScoresLevel[6][8] = 5;
+    DataClassObject.HighScoresLevel[6][0] = 6;
+    DataClassObject.HighScoresLevel[6][1] = 5;
+    DataClassObject.HighScoresLevel[6][2] = 5;
+    DataClassObject.HighScoresLevel[6][3] = 4;
+    DataClassObject.HighScoresLevel[6][4] = 4;
+    DataClassObject.HighScoresLevel[6][5] = 3;
+    DataClassObject.HighScoresLevel[6][6] = 3;
+    DataClassObject.HighScoresLevel[6][7] = 2;
+    DataClassObject.HighScoresLevel[6][8] = 2;
     DataClassObject.HighScoresLevel[6][9] = 1;
 }
 
@@ -357,6 +357,11 @@ function CheckForNewHighScores()
     for (let index = 0; index < 5; index++)
     {
         human[index] = PlayerInput[index] !== CPU;
+    }
+
+    for (let index = 0; index < 5; index++)
+    {
+        if (PlayerInput[index] === CPU)  Score[index] = 0;
     }
 
     DataClassObject.NewHighScoreRank = 999;
@@ -390,7 +395,5 @@ function CheckForNewHighScores()
         DataClassObject.HighScoresLevel[GameMode][DataClassObject.NewHighScoreRank] = ""+Level[DataClassObject.PlayerWithHighestScore]+"";
 
         DataClassObject.HighScoresScore[GameMode][DataClassObject.NewHighScoreRank] = ""+Score[DataClassObject.PlayerWithHighestScore]+"";
-
-
-    }   
+    }
 }	

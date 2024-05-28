@@ -116,49 +116,40 @@ function CheckForGamepadInput(index)
     for (axisIndex = 0; axisIndex < 6; axisIndex++)  axis[axisIndex] = 0;
     for (buttonIndex = 0; buttonIndex < 21; buttonIndex++)  button[buttonIndex] = 0;
 
-    for (axisIndex = 0; axisIndex < 6; axisIndex++)
-    {
-        if (InputClassObject.Gamepads[index])
-        {
-            if (InputClassObject.Gamepads[index].axes[axisIndex])
-            {
-                axis[axisIndex] = InputClassObject.Gamepads[index].axes[axisIndex];
+    if (InputClassObject.StickDriftDisable[index] === false) {
+        for (axisIndex = 0; axisIndex < 6; axisIndex++) {
+            if (InputClassObject.Gamepads[index]) {
+                if (InputClassObject.Gamepads[index].axes[axisIndex]) {
+                    axis[axisIndex] = InputClassObject.Gamepads[index].axes[axisIndex];
+                }
             }
         }
-    }
 
-    for (buttonIndex = 0; buttonIndex < 21; buttonIndex++)
-    {
-        if (InputClassObject.Gamepads[index])
-        {               
-            if (InputClassObject.Gamepads[index].buttons[buttonIndex])
-            {
-                button[buttonIndex] = InputClassObject.Gamepads[index].buttons[buttonIndex].pressed;
+        for (buttonIndex = 0; buttonIndex < 21; buttonIndex++) {
+            if (InputClassObject.Gamepads[index]) {
+                if (InputClassObject.Gamepads[index].buttons[buttonIndex]) {
+                    button[buttonIndex] = InputClassObject.Gamepads[index].buttons[buttonIndex].pressed;
+                }
             }
         }
-    }
 
-    InputClassObject.JoystickDirection[index+2] = InputClassObject.CENTER;
-    for (axisIndex = 0; axisIndex < 6; axisIndex++)
-    {
-        if (InputClassObject.GamepadUP[index] === axisIndex)
-        {
-            if (axis[axisIndex] < -0.75)  InputClassObject.JoystickDirection[index+2] = InputClassObject.UP;
-        }
+        InputClassObject.JoystickDirection[index + 2] = InputClassObject.CENTER;
+        for (axisIndex = 0; axisIndex < 6; axisIndex++) {
+            if (InputClassObject.GamepadUP[index] === axisIndex) {
+                if (axis[axisIndex] < -0.95) InputClassObject.JoystickDirection[index + 2] = InputClassObject.UP;
+            }
 
-        if (InputClassObject.GamepadDOWN[index] === axisIndex)
-        {
-            if (axis[axisIndex] > 0.75)  InputClassObject.JoystickDirection[index+2] = InputClassObject.DOWN;
-        }
+            if (InputClassObject.GamepadDOWN[index] === axisIndex) {
+                if (axis[axisIndex] > 0.95) InputClassObject.JoystickDirection[index + 2] = InputClassObject.DOWN;
+            }
 
-        if (InputClassObject.GamepadLEFT[index] === axisIndex)
-        {
-            if (axis[axisIndex] < -0.75)  InputClassObject.JoystickDirection[index+2] = InputClassObject.LEFT;
-        }
-        
-        if (InputClassObject.GamepadRIGHT[index] === axisIndex)
-        {
-            if (axis[axisIndex] > 0.75)  InputClassObject.JoystickDirection[index+2] = InputClassObject.RIGHT;
+            if (InputClassObject.GamepadLEFT[index] === axisIndex) {
+                if (axis[axisIndex] < -0.95) InputClassObject.JoystickDirection[index + 2] = InputClassObject.LEFT;
+            }
+
+            if (InputClassObject.GamepadRIGHT[index] === axisIndex) {
+                if (axis[axisIndex] > 0.95) InputClassObject.JoystickDirection[index + 2] = InputClassObject.RIGHT;
+            }
         }
     }
 
@@ -166,22 +157,22 @@ function CheckForGamepadInput(index)
     {
         if ( InputClassObject.GamepadUP[index] === (10+buttonIndex) )
         {
-            if (button[buttonIndex] >.75)  InputClassObject.JoystickDirection[index+2] = InputClassObject.UP;
+            if (button[buttonIndex] >.95)  InputClassObject.JoystickDirection[index+2] = InputClassObject.UP;
         }
 
         if ( InputClassObject.GamepadDOWN[index] === (10+buttonIndex) )
         {
-            if (button[buttonIndex] > .75)  InputClassObject.JoystickDirection[index+2] = InputClassObject.DOWN;
+            if (button[buttonIndex] > .95)  InputClassObject.JoystickDirection[index+2] = InputClassObject.DOWN;
         }
 
         if ( InputClassObject.GamepadLEFT[index] === (10+buttonIndex) )
         {
-            if (button[buttonIndex] > .75)  InputClassObject.JoystickDirection[index+2] = InputClassObject.LEFT;
+            if (button[buttonIndex] > .95)  InputClassObject.JoystickDirection[index+2] = InputClassObject.LEFT;
         }
 
         if ( InputClassObject.GamepadRIGHT[index] === (10+buttonIndex) )
         {
-            if (button[buttonIndex] > .75)  InputClassObject.JoystickDirection[index+2] = InputClassObject.RIGHT;
+            if (button[buttonIndex] > .95)  InputClassObject.JoystickDirection[index+2] = InputClassObject.RIGHT;
         }
     }
 
@@ -191,11 +182,11 @@ function CheckForGamepadInput(index)
     {
         if ( InputClassObject.GamepadBUTTONONE[index] === (10+buttonIndex) )
         {
-            if (button[buttonIndex] > .5)  InputClassObject.JoystickButtonOne[index+2] = true;
+            if (button[buttonIndex] > .95)  InputClassObject.JoystickButtonOne[index+2] = true;
         }
         if ( InputClassObject.GamepadBUTTONTWO[index] === (10+buttonIndex) )
         {
-            if (button[buttonIndex] > .5)  InputClassObject.JoystickButtonTwo[index+2] = true;
+            if (button[buttonIndex] > .95)  InputClassObject.JoystickButtonTwo[index+2] = true;
         }
     }
 }
@@ -208,33 +199,29 @@ function QueryGamepadsForInput(index)
 
     if (InputClassObject.DelayAllUserInput > 0)  return(-1);
 
-    for (axisIndex = 0; axisIndex < 6; axisIndex++)
-    {
-        if (InputClassObject.Gamepads[index])
-        {
-            if (InputClassObject.Gamepads[index].axes[axisIndex])
-            {
-                if (InputClassObject.Gamepads[index].axes[axisIndex] < -.75 || InputClassObject.Gamepads[index].axes[axisIndex] > .75) {
-                    InputClassObject.GameControllerInitialized[index] = true;
-                    return (InputClassObject.GamepadAxisZero + axisIndex);
+    if (InputClassObject.StickDriftDisable[index] === false) {
+        for (axisIndex = 0; axisIndex < 6; axisIndex++) {
+            if (InputClassObject.Gamepads[index]) {
+                if (InputClassObject.Gamepads[index].axes[axisIndex]) {
+                    if (InputClassObject.Gamepads[index].axes[axisIndex] < -.95 || InputClassObject.Gamepads[index].axes[axisIndex] > .95) {
+                        InputClassObject.GameControllerInitialized[index] = true;
+                        return (InputClassObject.GamepadAxisZero + axisIndex);
+                    }
+                }
+            }
+        }
+
+        for (buttonIndex = 0; buttonIndex < 21; buttonIndex++) {
+            if (InputClassObject.Gamepads[index]) {
+                if (InputClassObject.Gamepads[index].buttons[buttonIndex]) {
+                    if (InputClassObject.Gamepads[index].buttons[buttonIndex].pressed === true) {
+                        InputClassObject.GameControllerInitialized[index] = true;
+                        return (InputClassObject.GamepadButtonZero + buttonIndex);
+                    }
                 }
             }
         }
     }
 
-    for (buttonIndex = 0; buttonIndex < 21; buttonIndex++)
-    {
-        if (InputClassObject.Gamepads[index])
-        {               
-            if (InputClassObject.Gamepads[index].buttons[buttonIndex])
-            {
-                if (InputClassObject.Gamepads[index].buttons[buttonIndex].pressed === true) {
-                    InputClassObject.GameControllerInitialized[index] = true;
-                    return (InputClassObject.GamepadButtonZero + buttonIndex);
-                }
-            }
-        }
-    }
-    
     return(-1);
 }
